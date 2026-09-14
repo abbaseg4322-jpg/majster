@@ -125,7 +125,6 @@ footer .author-credit { display: block; font-size: 13px; opacity: 0.9; margin-to
 
 <header>
   <div class="top-bar">
-    <!-- صورة شعار الجامعة بمسارها الدقيق على GitHub -->
     <img src="univ_logo.png" class="univ-logo" alt="شعار جامعة تكريت" onerror="this.onerror=null; this.src='https://upload.wikimedia.org/wikipedia/ar/a/a2/Tikrit_University_logo.png';">
     <div class="site-title">
       <h1>دراسات العليا – قسم الإعلام والصحافة</h1>
@@ -149,7 +148,7 @@ footer .author-credit { display: block; font-size: 13px; opacity: 0.9; margin-to
   <div class="page active" id="homePage">
     <div class="hero">
       <h2>منصة دراسات العليا – الإعلام والصحافة</h2>
-      <p>المنصة الرسمية لحفظ وعرض ملفات ومواد طلبة الدراسات العليا في قسم الإعلام والصحافة – جامعة تكريت[cite: 2].</p>
+      <p>المنصة الرسمية لحفظ وعرض ملفات ومواد طلبة الدراسات العليا في قسم الإعلام والصحافة – جامعة تكريت.</p>
       <div class="stats">
         <div class="stat"><b id="stSubjects">0</b>مادة دراسية</div>
         <div class="stat"><b id="stFiles">0</b>ملف محفوظ</div>
@@ -248,7 +247,7 @@ footer .author-credit { display: block; font-size: 13px; opacity: 0.9; margin-to
 <div class="toast" id="toast"></div>
 
 <footer>
-  © 2026 دراسات العليا – قسم الإعلام والصحافة | جامعة تكريت – جميع الحقوق محفوظة[cite: 2]
+  © 2026 دراسات العليا – قسم الإعلام والصحافة | جامعة تكريت – جميع الحقوق محفوظة
   <span class="author-credit">تم إنشاء الموقع من الطالب عباس بركات فرحان</span>
 </footer>
 
@@ -256,16 +255,13 @@ footer .author-credit { display: block; font-size: 13px; opacity: 0.9; margin-to
 /* ================== الإعدادات ================== */
 const ADMIN_PWD = '202612341234';
 
-// ====> ⚠️ ضع رابط الـ Web App الخاص بك هنا <====
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwoOOXWOwp_pkJQz5AJ4ovvWxmgC7q1S6gw2RMI-MC-4-FVZYgjC0PyZvMPwD4P8VGd6A/exec';
+// ====> تم دمج الرابط الجديد الخاص بك بنجاح <====
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxBhY2b2VB1P3TjYFJv8WDLkU822sRslszBOUevJrFBBZXR78f8sXOZ6PRFuSJa3BK93g/exec';
 
 /* ================== الحالة العامة ================== */
 let isAdmin = localStorage.getItem('tk_isAdmin')==='1';
-let subjects = JSON.parse(localStorage.getItem('tk_subjects')||'null')||[
-  {id:'s1',name:'الصحافة الالكترونية',desc:'دراسة الصحافة الرقمية ومنصاتها',icon:'💻',folderId:null, refs:'1. كتاب الصحافة الإلكترونية'},
-  {id:'s2',name:'نظرية الاتصال',desc:'المفاهيم والنظريات الأساسية في الاتصال الجماهيري',icon:'📡',folderId:null, refs:'1. نظريات الاتصال - د. مكاوي'}
-];
-let notifs = JSON.parse(localStorage.getItem('tk_notifs')||'null')||['أهلاً بكم في موقع قسم الإعلام والصحافة – جامعة تكريت'];
+let subjects = []; // يتم جلبها من السيرفر الآن
+let notifs = [];   // يتم جلبها من السيرفر الآن
 let currentSubject = null;
 let subjectFileCounts = {};
 
@@ -313,6 +309,25 @@ function filterFiles() {
 function renderNotifs(){
   document.getElementById('stNotifs').textContent=notifs.length;
   document.getElementById('notifScroll').textContent = notifs.length ? notifs.join('   ✦   ') : 'لا توجد تبليغات حالياً';
+}
+
+/* ================== جلب البيانات من السيرفر (جديد وحصري) ================== */
+async function fetchAppData() {
+  const g = document.getElementById('subjectsGrid');
+  g.innerHTML = '<div class="empty-box" style="grid-column: 1 / -1;">⏳ جاري جلب المواد من السيرفر...</div>';
+  
+  const res = await gasRequest({ action: 'getAppData' });
+  
+  if (res.status === 'success') {
+    subjects = res.subjects || [];
+    notifs = res.notifs || [];
+  } else {
+    toast('⚠️ حدث خطأ في الاتصال بقاعدة البيانات');
+  }
+  
+  renderSubjects(); 
+  renderNotifs();
+  if(isAdmin) renderAdmin();
 }
 
 /* ================== عرض المواد ================== */
@@ -412,7 +427,7 @@ async function deleteSelectedFiles() {
   loadSubjectFiles(); renderSubjects();
 }
 
-/* ================== إدارة الأدمن ================== */
+/* ================== إدارة الأدمن والاتصال بالسيرفر ================== */
 function openAdmin(){
   showPage('adminPage'); setNav(document.getElementById('navAdmin')); renderAdmin();
 }
@@ -448,7 +463,7 @@ function logout(){
 
 async function addSubject(){
   const n=document.getElementById('newSubName').value.trim(); if(!n) return toast('⚠️ أدخل اسم المادة');
-  toast('⏳ جاري إنشاء مجلد المادة...');
+  toast('⏳ جاري إنشاء مجلد المادة وحفظها في السيرفر...');
   
   let folderId = null;
   const res = await gasRequest({ action: 'createFolder', name: n });
@@ -460,20 +475,34 @@ async function addSubject(){
     icon:document.getElementById('newSubIcon').value.trim()||'📖',
     refs:document.getElementById('newSubRefs').value.trim(), folderId
   });
-  localStorage.setItem('tk_subjects',JSON.stringify(subjects));
+  
+  // حفظ في السيرفر ليراه الجميع
+  await gasRequest({ action: 'saveAppData', subjects: subjects, notifs: notifs });
+  
   document.getElementById('newSubName').value=''; document.getElementById('newSubDesc').value=''; document.getElementById('newSubRefs').value='';
-  toast('✅ تمت إضافة المادة'); renderSubjects(); renderAdmin();
+  toast('✅ تمت إضافة المادة للجميع'); renderSubjects(); renderAdmin();
 }
 
-function delSubject(id){
-  if(!confirm('حذف المادة من الموقع؟')) return;
-  subjects = subjects.filter(s=>s.id!==id); localStorage.setItem('tk_subjects',JSON.stringify(subjects));
+async function delSubject(id){
+  if(!confirm('حذف المادة من الموقع للجميع؟')) return;
+  toast('⏳ جاري الحذف من السيرفر...');
+  subjects = subjects.filter(s=>s.id!==id); 
+  
+  // تحديث السيرفر
+  await gasRequest({ action: 'saveAppData', subjects: subjects, notifs: notifs });
+  
   renderSubjects(); renderAdmin(); toast('🗑️ تم الحذف');
 }
-function addNotif(){
+
+async function addNotif(){
   const t=document.getElementById('newNotif').value.trim(); if(!t) return toast('⚠️ اكتب التبليغ');
-  notifs.push(t); localStorage.setItem('tk_notifs',JSON.stringify(notifs));
-  document.getElementById('newNotif').value=''; renderNotifs(); toast('📢 تم النشر');
+  toast('⏳ جاري النشر...');
+  notifs.push(t); 
+  
+  // تحديث السيرفر
+  await gasRequest({ action: 'saveAppData', subjects: subjects, notifs: notifs });
+  
+  document.getElementById('newNotif').value=''; renderNotifs(); toast('📢 تم النشر للجميع');
 }
 
 /* ================== الرفع (Base64) ================== */
@@ -527,7 +556,7 @@ async function handleUpload(fileList){
 
 /* ================== تشغيل ================== */
 (function init(){
-  renderSubjects(); renderNotifs();
+  fetchAppData(); // نطلب البيانات من السيرفر عند فتح الموقع
 })();
 </script>
 </body>

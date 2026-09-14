@@ -255,8 +255,8 @@ footer .author-credit { display: block; font-size: 13px; opacity: 0.9; margin-to
 /* ================== الإعدادات ================== */
 const ADMIN_PWD = '202612341234';
 
-// ====> تم دمج الرابط الجديد الخاص بك بنجاح <====
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxBhY2b2VB1P3TjYFJv8WDLkU822sRslszBOUevJrFBBZXR78f8sXOZ6PRFuSJa3BK93g/exec';
+// ====> الرابط الجديد بعد التحديث <====
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxiSeGxt59_w6jREi4fm4NQuTsBxb-3891v0WHHMGhL71hVnSldjeLk5Oh7Wuv-1tnIcQ/exec';
 
 /* ================== الحالة العامة ================== */
 let isAdmin = localStorage.getItem('tk_isAdmin')==='1';
@@ -311,7 +311,7 @@ function renderNotifs(){
   document.getElementById('notifScroll').textContent = notifs.length ? notifs.join('   ✦   ') : 'لا توجد تبليغات حالياً';
 }
 
-/* ================== جلب البيانات من السيرفر (جديد وحصري) ================== */
+/* ================== جلب البيانات من السيرفر ================== */
 async function fetchAppData() {
   const g = document.getElementById('subjectsGrid');
   g.innerHTML = '<div class="empty-box" style="grid-column: 1 / -1;">⏳ جاري جلب المواد من السيرفر...</div>';

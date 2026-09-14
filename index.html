@@ -130,7 +130,9 @@ footer .author-credit { display: block; font-size: 13px; opacity: 0.9; margin-to
 
 <header>
   <div class="top-bar">
-    <img src="تكريت2-removebg-preview.png" class="univ-logo" alt="شعار جامعة تكريت">
+    <!-- الشعار مأخوذ مباشرة من الإنترنت ليعمل فوراً -->
+    <img src="https://upload.wikimedia.org/wikipedia/ar/a/a2/Tikrit_University_logo.png" class="univ-logo" alt="شعار جامعة تكريت">
+    
     <div class="site-title">
       <h1>دراسات العليا – قسم الإعلام والصحافة</h1>
       <p>جامعة تكريت | كلية الآداب</p>
@@ -139,7 +141,9 @@ footer .author-credit { display: block; font-size: 13px; opacity: 0.9; margin-to
       <a id="navHome" class="active" onclick="showPage('homePage');setNav(this)">الرئيسية</a>
       <a id="navAdmin" onclick="openAdmin()">🔐 لوحة الأدمن</a>
     </nav>
-    <img src="تكريت-removebg-preview.jpg" class="college-logo" alt="شعار كلية الآداب">
+    
+    <!-- كود ذكي: يبحث عن صورتك، وإذا لم يجدها يعرض شعار الجامعة كبديل مؤقت -->
+    <img src="تكريت-removebg-preview.jpg" class="college-logo" alt="شعار كلية الآداب" onerror="this.onerror=null; this.src='https://upload.wikimedia.org/wikipedia/ar/a/a2/Tikrit_University_logo.png';">
   </div>
   <div class="notif-banner">
     <div class="notif-inner">
@@ -197,7 +201,6 @@ footer .author-credit { display: block; font-size: 13px; opacity: 0.9; margin-to
         <div id="uploadPanel" style="display:none;margin-top:30px">
           <div class="admin-panel" style="margin-top:0">
             <h2 class="section-title">⬆️ رفع ملفات متعددة (صور، فيديو، مستندات)</h2>
-            <!-- تم التأكد من دعم multiple لتحديد أكثر من ملف بنفس اللحظة -->
             <div class="upload-zone" onclick="document.getElementById('fileInput').click()">
               <div class="up-icon">📤</div>
               <b>اضغط لاختيار مجموعة ملفات للرفع معاً</b>
